@@ -1,7 +1,7 @@
 "use client";
 
 import useNote from "@/hooks/useNote";
-import type { Note } from "@prisma/client";
+import type { Note } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SidebarMenuButton } from "./ui/sidebar";
