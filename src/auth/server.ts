@@ -28,11 +28,19 @@ export async function createClient() {
 
 
 export async function getUser() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    console.error(error);
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      // Only log actual errors, not missing sessions
+      if (error.message !== "Auth session missing!") {
+        console.error("Auth error:", error);
+      }
+      return null;
+    }
+    return data.user;
+  } catch (error) {
+    console.error("Failed to get user:", error);
     return null;
   }
-  return data.user;
 }
