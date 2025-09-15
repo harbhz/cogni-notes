@@ -6,14 +6,13 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { prisma } from "@/db/prisma";
-import { Note } from "@prisma/client";
 import Link from "next/link";
 import SidebarGroupContent from "./SidebarGroupContent";
 
 async function AppSidebar() {
   const user = await getUser();
 
-  let notes: Note[] = [];
+  let notes = [];
 
   if (user) {
     notes = await prisma.note.findMany({
