@@ -32,12 +32,14 @@ export async function getUser() {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-      // Only log actual errors, not missing sessions
       if (error.message !== "Auth session missing!") {
         console.error("Auth error:", error);
+      } else {
+        console.log("No active session found");
       }
       return null;
     }
+    console.log("User found:", data.user ? { id: data.user.id, email: data.user.email } : null);
     return data.user;
   } catch (error) {
     console.error("Failed to get user:", error);

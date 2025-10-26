@@ -49,13 +49,29 @@ export default async function HomePage({ searchParams }: Props) {
   });
 
   return (
-    <div className="flex h-full flex-col items-center gap-4">
-      <div className="flex w-full max-w-4xl justify-end gap-2">
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: '16px', 
+      height: '100%', 
+      width: '100%',
+      maxWidth: '100%',
+      overflow: 'hidden'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        gap: '8px', 
+        width: '100%',
+        flexShrink: 0
+      }}>
         <AskAIButton user={user} />
         <NewNoteButton user={user} />
       </div>
 
-      <NoteTextInput noteId={noteId} startingNoteText={note?.text || ""} />
+      <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
+        <NoteTextInput noteId={noteId} startingNoteText={note?.text || ""} />
+      </div>
 
       <HomeToast />
     </div>
