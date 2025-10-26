@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
 import { createNoteAction } from "@/actions/notes";
 
 type Props = {
@@ -23,9 +22,10 @@ function NewNoteButton({ user }: Props) {
     } else {
       setLoading(true);
 
-      const uuid = uuidv4();
-      await createNoteAction(uuid);
-      router.push(`/?noteId=${uuid}&toastType=newNote`);
+      const result = await createNoteAction();
+      if (result.errorMessage === null && 'noteId' in result) {
+        router.push(`/?noteId=${result.noteId}&toastType=newNote`);
+      }
 
       setLoading(false);
     }

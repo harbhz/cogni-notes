@@ -34,11 +34,10 @@ function AuthForm({ type }: Props) {
         } else {
           await signUpAction(email, password);
         }
-        // If we reach here, there was an error (since successful actions redirect)
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           title: "Error",
-          description: error.message || "An unexpected error occurred",
+          description: error instanceof Error ? error.message : "An unexpected error occurred",
           variant: "destructive",
         });
       }
