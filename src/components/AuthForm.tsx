@@ -28,19 +28,17 @@ function AuthForm({ type }: Props) {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
-      let errorMessage;
-      if (isLoginForm) {
-        errorMessage = (await loginAction(email, password)).errorMessage;
-      } else {
-        errorMessage = (await signUpAction(email, password)).errorMessage;
-      }
-
-      if (!errorMessage) {
-        router.replace(`/?toastType=${type}`);
-      } else {
+      try {
+        if (isLoginForm) {
+          await loginAction(email, password);
+        } else {
+          await signUpAction(email, password);
+        }
+        // If we reach here, there was an error (since successful actions redirect)
+      } catch (error: any) {
         toast({
           title: "Error",
-          description: errorMessage,
+          description: error.message || "An unexpected error occurred",
           variant: "destructive",
         });
       }
