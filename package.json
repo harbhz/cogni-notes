@@ -10,9 +10,7 @@
     "lint": "eslint",
     "migrate": "npx prisma generate && env $(cat .env.local | xargs) npx prisma migrate dev"
   },
-  "prisma": {
-    "schema": "src/db/schema.prisma"
-  },
+
   "dependencies": {
     "@prisma/client": "^6.16.1",
     "prisma": "^6.16.1",

@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SidebarMenuButton } from "./ui/sidebar";
 import Link from "next/link";
+import { formatDate } from "@/lib/dateUtils";
 
 type Props = {
   note: Note;
@@ -48,7 +49,7 @@ function SelectNoteButton({ note }: Props) {
           {noteText}
         </p>
         <p className="text-muted-foreground text-xs">
-          {note.updatedAt.toLocaleDateString()}
+          {formatDate(note.updatedAt)}
         </p>
       </Link>
     </SidebarMenuButton>
