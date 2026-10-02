@@ -57,8 +57,13 @@ export const askAIAboutNotesAction = async (
     messages,
   });
 
+  const responseContent = (completion.choices[0].message.content || "A problem has occurred")
+    .replace(/^\s*```(?:html)?\s*/i, "")
+    .replace(/\s*```\s*$/i, "")
+    .trim();
+
   return sanitizeHtml(
-    completion.choices[0].message.content || "A problem has occurred",
+    responseContent,
     {
       allowedTags: ["b", "br", "code", "em", "h1", "h2", "h3", "h4", "h5", "h6", "li", "ol", "p", "pre", "strong", "u", "ul"],
       allowedAttributes: {},

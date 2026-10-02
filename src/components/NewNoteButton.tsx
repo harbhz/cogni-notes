@@ -27,6 +27,7 @@ function NewNoteButton({ user }: Props) {
       const result = await createNoteAction();
       if (result.errorMessage === null && 'noteId' in result) {
         router.push(`/?noteId=${result.noteId}&toastType=newNote`);
+        router.refresh();
       } else if (result.errorMessage) {
         toast({
           title: "Could not create note",

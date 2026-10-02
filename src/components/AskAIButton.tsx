@@ -120,7 +120,7 @@ function AskAIButton({ user }: Props) {
                 {question}
               </p>
               {responses[index] && (
-                <p
+                <div
                   className="bot-response max-w-[90%] text-sm leading-6 text-muted-foreground"
                   dangerouslySetInnerHTML={{ __html: responses[index] }}
                 />

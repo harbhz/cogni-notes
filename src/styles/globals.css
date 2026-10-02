@@ -97,8 +97,20 @@ body {
 }
 
 .app-sidebar {
+  display: none;
   border-right: 1px solid hsl(var(--sidebar-border));
   background: hsl(var(--sidebar-background));
+}
+
+@media (min-width: 1024px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+  }
+
+  .app-sidebar {
+    display: flex;
+  }
 }
 
 .app-main {

@@ -28,7 +28,7 @@ export default function RootLayout({
         >
           <NoteProvider>
             <div className="app-shell grid min-h-screen lg:grid-cols-[272px_minmax(0,1fr)]">
-              <aside className="app-sidebar hidden lg:flex">
+              <aside className="app-sidebar">
                 <AppSidebar />
               </aside>
               

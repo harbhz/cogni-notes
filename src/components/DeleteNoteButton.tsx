@@ -46,6 +46,8 @@ function DeleteNoteButton({ noteId, deleteNoteLocally }: Props) {
         if (noteId === noteIdParam) {
           router.replace("/");
         }
+
+        router.refresh();
       } else {
         toast({
           title: "Error",
