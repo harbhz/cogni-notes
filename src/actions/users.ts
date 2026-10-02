@@ -17,12 +17,13 @@ export const loginAction = async (email: string, password: string) => {
     if (error) throw error;
 
     const userId = data.user.id;
+    const userEmail = data.user.email ?? email;
     await prisma.user.upsert({
-      where: { id: userId },
-      update: { email: data.user.email ?? email },
+      where: { email: userEmail },
+      update: {},
       create: {
         id: userId,
-        email: data.user.email ?? email,
+        email: userEmail,
       },
     });
 
@@ -63,8 +64,8 @@ export const signUpAction = async (email: string, password: string) => {
     if (!userId) throw new Error("Error signing up");
 
     await prisma.user.upsert({
-      where: { id: userId },
-      update: { email },
+      where: { email },
+      update: {},
       create: {
         id: userId,
         email,

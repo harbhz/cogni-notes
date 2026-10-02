@@ -116,6 +116,11 @@ body {
   max-width: 28rem;
 }
 
+.ai-dialog {
+  width: min(calc(100vw - 2rem), 56rem);
+  max-height: min(720px, calc(100vh - 2rem));
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }

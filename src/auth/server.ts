@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { prisma } from "@/db/prisma";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -27,7 +28,14 @@ export async function getUser() {
     if (error) {
       return null;
     }
-    return data.user;
+    if (!data.user.email) return data.user;
+
+    const databaseUser = await prisma.user.findUnique({
+      where: { email: data.user.email },
+      select: { id: true },
+    });
+
+    return databaseUser ? { ...data.user, id: databaseUser.id } : data.user;
   } catch (error) {
     console.error("Failed to get user:", error);
     return null;

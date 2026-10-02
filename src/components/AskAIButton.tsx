@@ -103,7 +103,7 @@ function AskAIButton({ user }: Props) {
         <Button variant="secondary">Ask AI</Button>
       </DialogTrigger>
       <DialogContent
-        className="custom-scrollbar flex h-[85vh] max-w-4xl flex-col overflow-y-auto"
+        className="ai-dialog custom-scrollbar flex flex-col overflow-y-auto"
         ref={contentRef}
       >
         <DialogHeader>
@@ -113,15 +113,15 @@ function AskAIButton({ user }: Props) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 flex flex-col gap-8">
+        <div className="mt-4 flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-1">
           {questions.map((question, index) => (
             <Fragment key={index}>
-              <p className="bg-muted text-muted-foreground ml-auto max-w-[60%] rounded-md px-2 py-1 text-sm">
+              <p className="ml-auto max-w-[80%] rounded-xl bg-accent px-4 py-2.5 text-sm text-accent-foreground">
                 {question}
               </p>
               {responses[index] && (
                 <p
-                  className="bot-response text-muted-foreground text-sm"
+                  className="bot-response max-w-[90%] text-sm leading-6 text-muted-foreground"
                   dangerouslySetInnerHTML={{ __html: responses[index] }}
                 />
               )}
@@ -132,7 +132,7 @@ function AskAIButton({ user }: Props) {
         </div>
 
         <div
-          className="mt-auto flex cursor-text flex-col rounded-lg border p-4"
+          className="ai-composer mt-5 flex cursor-text flex-col rounded-xl border bg-muted/30 p-3"
           onClick={handleClickInput}
         >
           <Textarea
@@ -149,7 +149,7 @@ function AskAIButton({ user }: Props) {
             value={questionText}
             onChange={(e) => setQuestionText(e.target.value)}
           />
-          <Button className="ml-auto size-8 rounded-full">
+          <Button className="ml-auto size-9 rounded-full" aria-label="Send question">
             <ArrowUpIcon className="text-background" />
           </Button>
         </div>

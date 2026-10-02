@@ -29,6 +29,11 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
     };
   }, []);
 
+  const saveNote = async (text: string) => {
+    const result = await updateNoteAction(noteId, text);
+    setSaveState(result.errorMessage ? "error" : "saved");
+  };
+
   const handleUpdateNote = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
 
@@ -36,10 +41,17 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
     setSaveState("saving");
 
     if (updateTimeout.current) clearTimeout(updateTimeout.current);
-    updateTimeout.current = setTimeout(async () => {
-      const result = await updateNoteAction(noteId, text);
-      setSaveState(result.errorMessage ? "error" : "saved");
+    updateTimeout.current = setTimeout(() => {
+      void saveNote(text);
     }, 1500);
+  };
+
+  const handleBlur = () => {
+    if (updateTimeout.current) clearTimeout(updateTimeout.current);
+    if (noteText.trim()) {
+      setSaveState("saving");
+      void saveNote(noteText);
+    }
   };
 
   return (
@@ -48,6 +60,7 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
         value={noteText}
         onChange={handleUpdateNote}
         placeholder="Start writing..."
+        onBlur={handleBlur}
         className="custom-scrollbar h-full min-h-[420px] resize-none rounded-xl border-border/80 bg-card p-6 pb-14 text-base leading-7 shadow-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-0"
       />
       <div className="pointer-events-none absolute bottom-4 right-5 text-xs text-muted-foreground">
