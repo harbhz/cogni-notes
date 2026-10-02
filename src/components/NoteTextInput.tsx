@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Textarea } from "./ui/textarea";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import useNote from "@/hooks/useNote";
 import { updateNoteAction } from "@/actions/notes";
 
@@ -11,11 +11,11 @@ type Props = {
   startingNoteText: string;
 };
 
-let updateTimeout: NodeJS.Timeout;
-
 function NoteTextInput({ noteId, startingNoteText }: Props) {
   const noteIdParam = useSearchParams().get("noteId") || "";
   const { noteText, setNoteText } = useNote();
+  const updateTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [saveState, setSaveState] = useState<"saved" | "saving" | "error">("saved");
 
   useEffect(() => {
     if (noteIdParam === noteId) {
@@ -23,32 +23,39 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
     }
   }, [startingNoteText, noteIdParam, noteId, setNoteText]);
 
+  useEffect(() => {
+    return () => {
+      if (updateTimeout.current) clearTimeout(updateTimeout.current);
+    };
+  }, []);
+
   const handleUpdateNote = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
 
     setNoteText(text);
+    setSaveState("saving");
 
-    clearTimeout(updateTimeout);
-    updateTimeout = setTimeout(() => {
-      updateNoteAction(noteId, text);
+    if (updateTimeout.current) clearTimeout(updateTimeout.current);
+    updateTimeout.current = setTimeout(async () => {
+      const result = await updateNoteAction(noteId, text);
+      setSaveState(result.errorMessage ? "error" : "saved");
     }, 1500);
   };
 
   return (
-    <Textarea
-      value={noteText}
-      onChange={handleUpdateNote}
-      placeholder="Type your notes here.."
-      style={{
-        width: '100%',
-        height: '100%',
-        resize: 'none',
-        border: '1px solid var(--border)',
-        padding: '16px',
-        marginBottom: '16px'
-      }}
-      className="custom-scrollbar placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-    />
+    <div className="relative h-full min-h-[420px]">
+      <Textarea
+        value={noteText}
+        onChange={handleUpdateNote}
+        placeholder="Start writing..."
+        className="custom-scrollbar h-full min-h-[420px] resize-none rounded-xl border-border/80 bg-card p-6 pb-14 text-base leading-7 shadow-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-0"
+      />
+      <div className="pointer-events-none absolute bottom-4 right-5 text-xs text-muted-foreground">
+        {saveState === "saving" && "Saving..."}
+        {saveState === "saved" && "Saved"}
+        {saveState === "error" && <span className="text-destructive">Could not save</span>}
+      </div>
+    </div>
   );
 }
 

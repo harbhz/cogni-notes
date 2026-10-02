@@ -27,14 +27,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NoteProvider>
-            <div style={{ display: 'flex', minHeight: '100vh' }}>
-              <div style={{ width: '256px', flexShrink: 0 }}>
+            <div className="app-shell grid min-h-screen lg:grid-cols-[272px_minmax(0,1fr)]">
+              <aside className="app-sidebar hidden lg:flex">
                 <AppSidebar />
-              </div>
+              </aside>
               
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <div className="app-main flex min-w-0 flex-col">
                 <Header />
-                <main style={{ flex: 1, padding: '16px', overflow: 'auto' }}>
+                <main className="flex-1 overflow-auto px-4 py-5 sm:px-8 sm:py-8">
                   {children}
                 </main>
               </div>

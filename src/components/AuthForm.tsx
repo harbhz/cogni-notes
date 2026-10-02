@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CardContent, CardFooter } from "./ui/card";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -22,19 +22,29 @@ function AuthForm({ type }: Props) {
   const { toast } = useToast();
 
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
+      setFormError(null);
 
       try {
-        if (isLoginForm) {
-          await loginAction(email, password);
-        } else {
-          await signUpAction(email, password);
+        const result = isLoginForm
+          ? await loginAction(email, password)
+          : await signUpAction(email, password);
+
+        if (result && "errorMessage" in result && result.errorMessage) {
+          setFormError(result.errorMessage);
+          toast({
+            title: "Unable to continue",
+            description: result.errorMessage,
+            variant: "destructive",
+          });
         }
       } catch (error: unknown) {
+        setFormError(error instanceof Error ? error.message : "An unexpected error occurred");
         toast({
           title: "Error",
           description: error instanceof Error ? error.message : "An unexpected error occurred",
@@ -45,8 +55,8 @@ function AuthForm({ type }: Props) {
   };
 
   return (
-    <form action={handleSubmit}>
-      <CardContent className="grid w-full items-center gap-4">
+    <form action={handleSubmit} className="space-y-2">
+      <CardContent className="grid w-full gap-5">
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -54,6 +64,7 @@ function AuthForm({ type }: Props) {
             name="email"
             placeholder="Enter your email"
             type="email"
+            autoComplete="email"
             required
             disabled={isPending}
           />
@@ -65,13 +76,20 @@ function AuthForm({ type }: Props) {
             name="password"
             placeholder="Enter your password"
             type="password"
+            autoComplete={isLoginForm ? "current-password" : "new-password"}
+            minLength={8}
             required
             disabled={isPending}
           />
         </div>
       </CardContent>
-      <CardFooter className="mt-4 flex flex-col gap-6">
-        <Button className="w-full">
+      {formError && (
+        <p className="px-6 text-sm text-destructive" role="alert">
+          {formError}
+        </p>
+      )}
+      <CardFooter className="flex flex-col gap-5 pt-2">
+        <Button className="h-11 w-full text-base">
           {isPending ? (
             <Loader2 className="animate-spin" />
           ) : isLoginForm ? (

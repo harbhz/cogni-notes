@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getUser } from "@/auth/server";
 import AskAIButton from "@/components/AskAIButton";
 import NewNoteButton from "@/components/NewNoteButton";
@@ -48,28 +48,22 @@ export default async function HomePage({ searchParams }: Props) {
     where: { id: noteId, authorId: user.id },
   });
 
+  if (!note) notFound();
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      gap: '16px', 
-      height: '100%', 
-      width: '100%',
-      maxWidth: '100%',
-      overflow: 'hidden'
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'flex-end', 
-        gap: '8px', 
-        width: '100%',
-        flexShrink: 0
-      }}>
+    <div className="content-frame flex h-full min-h-[calc(100vh-150px)] flex-col gap-5 overflow-hidden">
+      <div className="flex shrink-0 flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Notespace</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight">Make a little room to think.</h2>
+        </div>
+        <div className="flex items-center gap-2">
         <AskAIButton user={user} />
         <NewNoteButton user={user} />
+        </div>
       </div>
 
-      <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
+      <div className="min-h-0 flex-1">
         <NoteTextInput noteId={noteId} startingNoteText={note?.text || ""} />
       </div>
 

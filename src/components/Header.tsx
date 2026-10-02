@@ -1,4 +1,3 @@
-import { shadow } from "@/styles/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -10,28 +9,23 @@ async function Header() {
   const user = await getUser();
 
   return (
-    <header
-      className="bg-popover relative flex h-24 w-full items-center justify-between px-4 sm:px-8"
-      style={{
-        boxShadow: shadow,
-      }}
-    >
-      <Link className="flex items-end gap-2" href="/">
+    <header className="sticky top-0 z-20 flex min-h-[76px] w-full items-center justify-between border-b bg-card/90 px-4 backdrop-blur sm:px-8">
+      <Link className="flex items-center gap-3" href="/">
         <Image
           src="/cogni-notes.png"
-          height={60}
-          width={60}
+          height={42}
+          width={42}
           alt="logo"
-          className="rounded-full"
+          className="rounded-xl ring-1 ring-border"
           priority
         />
 
-        <h1 className="flex flex-col pb-1 text-2xl font-semibold leading-6">
-          Cogni <span>Notes</span>
+        <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
+          Cogni <span className="text-primary">Notes</span>
         </h1>
       </Link>
 
-      <div className="flex gap-4">
+      <div className="flex items-center gap-2 sm:gap-3">
         {user ? (
           <LogOutButton />
         ) : (

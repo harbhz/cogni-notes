@@ -10,17 +10,28 @@ export const loginAction = async (email: string, password: string) => {
   try {
     const supabase = await createClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) throw error;
 
+    const userId = data.user.id;
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: { email: data.user.email ?? email },
+      create: {
+        id: userId,
+        email: data.user.email ?? email,
+      },
+    });
+
     revalidatePath("/", "layout");
-    redirect("/");
   } catch (error) {
     return handleError(error);
   }
+
+  redirect("/");
 };
 
 export const logOutAction = async () => {
@@ -31,10 +42,11 @@ export const logOutAction = async () => {
     if (error) throw error;
 
     revalidatePath("/", "layout");
-    redirect("/login");
   } catch (error) {
     return handleError(error);
   }
+
+  redirect("/login");
 };
 
 export const signUpAction = async (email: string, password: string) => {
@@ -50,16 +62,19 @@ export const signUpAction = async (email: string, password: string) => {
     const userId = data.user?.id;
     if (!userId) throw new Error("Error signing up");
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: { email },
+      create: {
         id: userId,
         email,
       },
     });
 
     revalidatePath("/", "layout");
-    redirect("/");
   } catch (error) {
     return handleError(error);
   }
+
+  redirect("/login?toastType=signUp");
 };

@@ -30,6 +30,7 @@ function AskAIButton({ user }: Props) {
   const [questionText, setQuestionText] = useState("");
   const [questions, setQuestions] = useState<string[]>([]);
   const [responses, setResponses] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleOnOpenChange = (isOpen: boolean) => {
     if (!user) {
@@ -39,6 +40,7 @@ function AskAIButton({ user }: Props) {
         setQuestionText("");
         setQuestions([]);
         setResponses([]);
+        setErrorMessage(null);
       }
       setOpen(isOpen);
     }
@@ -60,16 +62,22 @@ function AskAIButton({ user }: Props) {
   };
 
   const handleSubmit = () => {
-    if (!questionText.trim()) return;
+    if (!questionText.trim() || isPending) return;
 
     const newQuestions = [...questions, questionText];
     setQuestions(newQuestions);
     setQuestionText("");
+    setErrorMessage(null);
     setTimeout(scrollToBottom, 100);
 
     startTransition(async () => {
-      const response = await askAIAboutNotesAction(newQuestions, responses);
-      setResponses((prev) => [...prev, response]);
+      try {
+        const response = await askAIAboutNotesAction(newQuestions, responses);
+        setResponses((prev) => [...prev, response]);
+      } catch (error) {
+        setQuestions((prev) => prev.slice(0, -1));
+        setErrorMessage(error instanceof Error ? error.message : "The AI request failed. Try again.");
+      }
 
       setTimeout(scrollToBottom, 100);
     });
@@ -119,7 +127,8 @@ function AskAIButton({ user }: Props) {
               )}
             </Fragment>
           ))}
-          {isPending && <p className="animate-pulse text-sm">Thinking...</p>}
+          {isPending && <p className="animate-pulse text-sm text-muted-foreground">Thinking...</p>}
+          {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
         </div>
 
         <div
