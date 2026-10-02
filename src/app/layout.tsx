@@ -6,6 +6,8 @@ import Header from "@/components/Header";
 import AppSidebar from "@/components/AppSidebar";
 import NoteProvider from "@/providers/NoteProvider";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Cogni Notes"
 };

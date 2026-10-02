@@ -5,6 +5,7 @@ import { prisma } from "../db/prisma";
 import { handleError } from "../lib/utils";
 import { getOpenAI } from "../openai-client";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import sanitizeHtml from "sanitize-html";
 
 export const askAIAboutNotesAction = async (
   newQuestions: string[],
@@ -56,7 +57,13 @@ export const askAIAboutNotesAction = async (
     messages,
   });
 
-  return completion.choices[0].message.content || "A problem has occurred";
+  return sanitizeHtml(
+    completion.choices[0].message.content || "A problem has occurred",
+    {
+      allowedTags: ["b", "br", "code", "em", "h1", "h2", "h3", "h4", "h5", "h6", "li", "ol", "p", "pre", "strong", "u", "ul"],
+      allowedAttributes: {},
+    },
+  );
 };
 
 export const deleteNoteAction = async (noteId: string) => {
